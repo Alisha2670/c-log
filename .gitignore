@@ -1,0 +1,14 @@
+# Compiled binaries and object files
+clog
+*.o
+*.out
+
+# Generated reports
+reports/*.txt
+!reports/.gitkeep
+
+# Editor and OS files
+.vscode/
+.idea/
+*.swp
+.DS_Store
