@@ -6,6 +6,9 @@
 #define MAX_LEVEL_LEN 16
 #define MAX_MSG_LEN 1024
 
+#define MAX_ENTRIES 1000
+#define MAX_INVALID_ENTRIES 100
+
 typedef struct {
     char date[MAX_DATE_LEN];
     char time[MAX_TIME_LEN];
