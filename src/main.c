@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "parser.h"
+#include "analyzer.h"
 
 #define MAX_LINE_LENGTH 1024
 
@@ -46,6 +47,7 @@ int main(int argc, char *argv[]) {
 
     fclose(file);
 
+    // 1. Display Validation Summary
     printf("========== VALIDATION SUMMARY ==========\n");
     printf("Total Lines Processed : %d\n", line_number);
     printf("Valid Entries Stored  : %d\n", valid_count);
@@ -57,13 +59,12 @@ int main(int argc, char *argv[]) {
             printf("  - Line %d\n", invalid_lines[i]);
         }
     }
-
-    printf("\nStored Entries in Memory:\n");
-    for (int i = 0; i < valid_count; i++) {
-        printf("  [%s] %-7s %s\n", entries[i].date, entries[i].level, entries[i].message);
-    }
-
     printf("========================================\n");
+
+    // 2. Compute and Display Statistics (Day 4)
+    LogStats stats;
+    analyze_logs(entries, valid_count, &stats);
+    print_statistics(&stats);
 
     return EXIT_SUCCESS;
 }
