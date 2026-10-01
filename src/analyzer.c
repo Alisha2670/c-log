@@ -46,3 +46,41 @@ void print_statistics(const LogStats *stats) {
     printf("\nError Rate    : %.2f%%\n", stats->error_rate);
     printf("====================================\n");
 }
+
+void find_recurring_errors(const LogEntry entries[], int count) {
+    ErrorFrequency freqs[MAX_UNIQUE_ERRORS];
+    int unique_count = 0;
+
+    for (int i = 0; i < count; i++) {
+        if (strcmp(entries[i].level, "ERROR") == 0) {
+            int found_index = -1;
+            for (int j = 0; j < unique_count; j++) {
+                if (strcmp(freqs[j].message, entries[i].message) == 0) {
+                    found_index = j;
+                    break;
+                }
+            }
+
+            if (found_index != -1) {
+                freqs[found_index].count++;
+            } else if (unique_count < MAX_UNIQUE_ERRORS) {
+                strncpy(freqs[unique_count].message, entries[i].message, MAX_MSG_LEN - 1);
+                freqs[unique_count].message[MAX_MSG_LEN - 1] = '\0';
+                freqs[unique_count].count = 1;
+                unique_count++;
+            }
+        }
+    }
+
+    printf("\n========== RECURRING ERRORS (ROOT CAUSE) ==========\n");
+    if (unique_count == 0) {
+        printf("No errors found in the log entries!\n");
+    } else {
+        printf("%-12s | %s\n", "Occurrences", "Error Message");
+        printf("-------------+-------------------------------------\n");
+        for (int i = 0; i < unique_count; i++) {
+            printf("     %-7d | %s\n", freqs[i].count, freqs[i].message);
+        }
+    }
+    printf("===================================================\n");
+}

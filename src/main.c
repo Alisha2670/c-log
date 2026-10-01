@@ -15,7 +15,9 @@ int main(int argc, char *argv[]) {
         fprintf(stderr, "  --errors              Show only ERROR logs\n");
         fprintf(stderr, "  --warnings            Show only WARNING logs\n");
         fprintf(stderr, "  --info                Show only INFO logs\n");
+        fprintf(stderr, "  --date <YYYY-MM-DD>   Show logs for a specific date\n");
         fprintf(stderr, "  --search <keyword>    Search messages by keyword\n");
+        fprintf(stderr, "  --recurring           Show top recurring error messages\n");
         return EXIT_FAILURE;
     }
 
@@ -54,7 +56,6 @@ int main(int argc, char *argv[]) {
 
     fclose(file);
 
-    // Check if user requested a filter or search flag
     if (argc > 2) {
         const char *flag = argv[2];
 
@@ -64,6 +65,13 @@ int main(int argc, char *argv[]) {
             filter_by_level(entries, valid_count, "WARNING");
         } else if (strcmp(flag, "--info") == 0) {
             filter_by_level(entries, valid_count, "INFO");
+        } else if (strcmp(flag, "--date") == 0) {
+            if (argc < 4) {
+                fprintf(stderr, "Error: --date option requires a date (YYYY-MM-DD).\n");
+                fprintf(stderr, "Usage: %s %s --date <YYYY-MM-DD>\n", argv[0], filepath);
+                return EXIT_FAILURE;
+            }
+            filter_by_date(entries, valid_count, argv[3]);
         } else if (strcmp(flag, "--search") == 0) {
             if (argc < 4) {
                 fprintf(stderr, "Error: --search option requires a keyword.\n");
@@ -71,13 +79,14 @@ int main(int argc, char *argv[]) {
                 return EXIT_FAILURE;
             }
             search_by_keyword(entries, valid_count, argv[3]);
+        } else if (strcmp(flag, "--recurring") == 0) {
+            find_recurring_errors(entries, valid_count);
         } else {
             fprintf(stderr, "Error: Unknown option '%s'\n", flag);
             fprintf(stderr, "Run without options to view summary statistics.\n");
             return EXIT_FAILURE;
         }
     } else {
-        // Default behavior: Display validation summary and statistics
         printf("========== VALIDATION SUMMARY ==========\n");
         printf("Total Lines Processed : %d\n", line_number);
         printf("Valid Entries Stored  : %d\n", valid_count);

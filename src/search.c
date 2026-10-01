@@ -1,8 +1,8 @@
 #define _GNU_SOURCE
 #include <stdio.h>
 #include <string.h>
-#include "search.h"
 #include "parser.h"
+#include "search.h"
 
 void filter_by_level(const LogEntry entries[], int count, const char *level) {
     int matches = 0;
@@ -18,6 +18,22 @@ void filter_by_level(const LogEntry entries[], int count, const char *level) {
 
     printf("Total Matches: %d\n", matches);
     printf("================================================\n");
+}
+
+void filter_by_date(const LogEntry entries[], int count, const char *date) {
+    int matches = 0;
+    printf("\n========== LOGS FOR DATE: %s ==========\n", date);
+
+    for (int i = 0; i < count; i++) {
+        if (strcmp(entries[i].date, date) == 0) {
+            printf("[%s %s] %-7s %s\n",
+                   entries[i].date, entries[i].time, entries[i].level, entries[i].message);
+            matches++;
+        }
+    }
+
+    printf("Total Matches: %d\n", matches);
+    printf("=========================================\n");
 }
 
 void search_by_keyword(const LogEntry entries[], int count, const char *keyword) {
