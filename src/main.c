@@ -4,6 +4,7 @@
 #include "parser.h"
 #include "analyzer.h"
 #include "search.h"
+#include "report.h"
 
 #define MAX_LINE_LENGTH 1024
 #define INITIAL_CAPACITY 10
@@ -19,6 +20,7 @@ int main(int argc, char *argv[]) {
         fprintf(stderr, "  --date <YYYY-MM-DD>   Show logs for a specific date\n");
         fprintf(stderr, "  --search <keyword>    Search messages by keyword\n");
         fprintf(stderr, "  --recurring           Show top recurring error messages\n");
+        fprintf(stderr, "  --report [--export]   Generate full diagnostic report (optional export)\n");
         return EXIT_FAILURE;
     }
 
@@ -29,7 +31,7 @@ int main(int argc, char *argv[]) {
         perror("Error opening file");
         return EXIT_FAILURE;
     }
-    
+
     int capacity = INITIAL_CAPACITY;
     LogEntry *entries = malloc(capacity * sizeof(LogEntry));
     if (entries == NULL) {
@@ -101,6 +103,12 @@ int main(int argc, char *argv[]) {
             }
         } else if (strcmp(flag, "--recurring") == 0) {
             find_recurring_errors(entries, valid_count);
+        } else if (strcmp(flag, "--report") == 0) {
+            int export_to_file = 0;
+            if (argc > 3 && strcmp(argv[3], "--export") == 0) {
+                export_to_file = 1;
+            }
+            generate_report(filepath, line_number, entries, valid_count, invalid_lines, invalid_count, export_to_file);
         } else {
             fprintf(stderr, "Error: Unknown option '%s'\n", flag);
             fprintf(stderr, "Run without options to view summary statistics.\n");
