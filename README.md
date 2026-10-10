@@ -92,7 +92,8 @@ c-log/
 ├── LICENSE             # Open-source MIT License
 ├── task.md             # 10-Day progressive milestone tracker
 ├── data/               # Test datasets
-│   ├── sample.log      # Primary test log
+│   ├── sample.log      # Primary test log (10 lines)
+│   ├── large_test.log  # Benchmark test log (5,000 lines)
 │   ├── empty.log       # Edge-case: 0-byte file
 │   └── corrupt.log     # Edge-case: 100% malformed lines
 ├── include/            # Header interface contracts
@@ -123,7 +124,7 @@ c-log/
 ### Building the Project
 Clone the repository and run `make`:
 ```bash
-git clone https://github.com/YOUR_USERNAME/c-log.git
+git clone https://github.com/Alisha2670/c-log.git
 cd c-log
 make
 ```
@@ -163,7 +164,12 @@ Error Rate    : 50.00%
 ====================================
 ```
 
-### 2. Severity Filtering
+### 2. High-Volume Benchmark (5,000 Lines in 11ms)
+```bash
+time ./clog data/large_test.log --report
+```
+
+### 3. Severity Filtering
 Filter logs by severity level:
 ```bash
 ./clog data/sample.log --errors
@@ -171,19 +177,19 @@ Filter logs by severity level:
 ./clog data/sample.log --info
 ```
 
-### 3. Date Filtering
+### 4. Date Filtering
 Filter logs belonging to a specific calendar date:
 ```bash
 ./clog data/sample.log --date 2026-09-27
 ```
 
-### 4. Case-Insensitive Keyword Search
+### 5. Case-Insensitive Keyword Search
 Search the message body for a specific term:
 ```bash
 ./clog data/sample.log --search database
 ```
 
-### 5. Root Cause Analysis (Recurring Errors)
+### 6. Root Cause Analysis (Recurring Errors)
 Isolate and count repeating errors to identify primary failure points:
 ```bash
 ./clog data/sample.log --recurring
@@ -198,7 +204,7 @@ Occurrences  | Error Message
 ===================================================
 ```
 
-### 6. Full Diagnostic Report & File Export
+### 7. Full Diagnostic Report & File Export
 Generate an executive report and export it to `reports/report.txt`:
 ```bash
 ./clog data/sample.log --report --export
@@ -210,20 +216,20 @@ Generate an executive report and export it to `reports/report.txt`:
 
 C-Log uses dynamic heap memory management (`malloc` / `realloc` / `free`) to scale dynamically without memory limits.
 
-Run memory analysis with Valgrind:
+Run memory analysis with Valgrind on 5,000 lines:
 ```bash
-valgrind --leak-check=full ./clog data/sample.log
+valgrind --leak-check=full ./clog data/large_test.log
 ```
 
-**Valgrind Verification Output:**
+**Valgrind Verification Output on 5,000 Lines:**
 ```text
-==5441== HEAP SUMMARY:
-==5441==     in use at exit: 0 bytes in 0 blocks
-==5441==   total heap usage: 4 allocs, 4 frees, 16,312 bytes allocated
-==5441== 
-==5441== All heap blocks were freed -- no leaks are possible
-==5441== 
-==5441== ERROR SUMMARY: 0 errors from 0 contexts
+==1904== HEAP SUMMARY:
+==1904==     in use at exit: 0 bytes in 0 blocks
+==1904==   total heap usage: 13 allocs, 13 frees, 10,972,152 bytes allocated
+==1904== 
+==1904== All heap blocks were freed -- no leaks are possible
+==1904== 
+==1904== ERROR SUMMARY: 0 errors from 0 contexts
 ```
 
 ---
